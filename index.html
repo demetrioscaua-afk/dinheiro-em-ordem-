@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dinheiro em Ordem: curso de finanças pessoais para iniciantes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Public+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f2f6f3; --card:#ffffff; --ink:#0f2230; --muted:#546a74; --line:#d3e0d9;
+  --green:#0b7a63; --green-ink:#ffffff; --gold:#ffcf4a; --gold-ink:#0f2230;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0c1a22; --card:#14262f; --ink:#eaf3ef; --muted:#9db4ba; --line:#244049;
+    --green:#3fcfa9; --green-ink:#0c1a22; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0c1a22; --card:#14262f; --ink:#eaf3ef; --muted:#9db4ba; --line:#244049;
+  --green:#3fcfa9; --green-ink:#0c1a22; color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.6 "Public Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;margin:0;line-height:1.1}
+.wrap{max-width:680px;margin:0 auto;padding:0 20px}
+section{padding:42px 0}
+h1{font-size:clamp(36px,9vw,54px);font-weight:900;letter-spacing:-.01em}
+h2{font-size:clamp(26px,6vw,34px);font-weight:700;margin-bottom:12px}
+p{margin:0 0 14px;max-width:62ch}
+.lead{font-size:19px;color:var(--muted);margin-top:16px}
+
+.calc{margin-top:28px;background:var(--card);border:2px solid var(--ink);border-radius:20px;padding:20px}
+.calc label{font-weight:700;display:block;margin-bottom:8px}
+.field{display:flex;align-items:center;gap:8px;border:2px solid var(--line);border-radius:12px;padding:4px 14px;background:var(--paper)}
+.field:focus-within{border-color:var(--green)}
+.field span{font-weight:700;color:var(--muted)}
+.field input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:700 26px "Public Sans",sans-serif;padding:10px 0;outline:none}
+.split{margin-top:18px;display:grid;gap:10px}
+.row{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:baseline}
+.row b{font-size:17px}
+.row output{font:700 22px Fraunces,Georgia,serif}
+.row small{grid-column:1 / -1;color:var(--muted);font-size:14px}
+.bar{display:flex;height:14px;border-radius:7px;overflow:hidden;margin-top:16px}
+.bar i{display:block}
+.b1{width:50%;background:var(--green)} .b2{width:30%;background:var(--gold)} .b3{width:20%;background:var(--ink)}
+.note{font-size:14px;color:var(--muted);margin:12px 0 0}
+
+.btn{display:inline-block;background:var(--green);color:var(--green-ink);font-weight:700;font-size:18px;text-decoration:none;padding:15px 26px;border-radius:12px;margin-top:20px}
+.btn:hover{filter:brightness(1.08)}
+.btn:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+.mods{display:grid;gap:12px;padding:0;margin:0;list-style:none;counter-reset:m}
+.mods li{counter-increment:m;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:16px 16px 16px 60px;position:relative}
+.mods li::before{content:counter(m);position:absolute;left:16px;top:14px;width:30px;height:30px;border-radius:50%;background:var(--gold);color:var(--gold-ink);font:700 16px/30px Fraunces,Georgia,serif;text-align:center}
+.mods b{display:block;margin-bottom:2px}
+.mods span{color:var(--muted);font-size:16px}
+
+ul.plain{padding-left:20px;margin:0 0 14px}
+ul.plain li{margin-bottom:6px}
+
+details{background:var(--card);border:1.5px solid var(--line);border-radius:14px;margin-bottom:10px}
+summary{cursor:pointer;padding:14px 16px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:22px;line-height:1;color:var(--green)}
+details[open] summary::after{content:"−"}
+details p{padding:0 16px;margin:0 0 14px}
+
+.buy{background:var(--ink);color:var(--paper);border-radius:22px;padding:28px 22px}
+:root[data-theme="dark"] .buy{background:var(--card);color:var(--ink)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .buy{background:var(--card);color:var(--ink)}}
+.buy .btn{background:var(--gold);color:var(--gold-ink);margin-top:6px}
+.price{font:900 clamp(42px,11vw,60px)/1 Fraunces,Georgia,serif}
+.price small{font:500 16px "Public Sans",sans-serif;opacity:.8;margin-left:6px}
+footer{padding:26px 0 40px;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<section>
+  <h1>Organize seu dinheiro em 4 passos simples</h1>
+  <p class="lead">Um curso de finanças pessoais para quem nunca aprendeu: saber para onde o dinheiro vai, montar um orçamento e criar uma reserva.</p>
+
+  <div class="calc">
+    <label for="renda">Quanto você recebe por mês?</label>
+    <div class="field"><span>R$</span><input id="renda" type="text" inputmode="numeric" placeholder="3000" autocomplete="off"></div>
+    <div class="split" aria-live="polite">
+      <div class="row"><b>Gastos essenciais</b><output id="o1">R$ 0</output><small>Aluguel, mercado, contas, transporte.</small></div>
+      <div class="row"><b>Desejos e lazer</b><output id="o2">R$ 0</output><small>Delivery, passeios, compras, assinaturas.</small></div>
+      <div class="row"><b>Reserva e dívidas</b><output id="o3">R$ 0</output><small>Guardar dinheiro ou quitar o que você deve.</small></div>
+    </div>
+    <div class="bar" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
+    <p class="note">Divisão 50/30/20, uma regra prática bastante usada como ponto de partida. Ela não considera a sua situação específica. No curso você aprende a ajustar à sua realidade.</p>
+  </div>
+
+  <a class="btn" href="#comprar">Quero aprender</a>
+</section>
+
+<section>
+  <h2>O que você aprende</h2>
+  <ol class="mods">
+    <li><b>Para onde vai seu dinheiro</b><span>Como anotar e classificar seus gastos sem planilha complicada.</span></li>
+    <li><b>Seu orçamento do mês</b><span>Defina limites realistas e acompanhe em poucos minutos por semana.</span></li>
+    <li><b>Como sair do aperto</b><span>Organizar dívidas, entender juros e negociar com calma.</span></li>
+    <li><b>Reserva de emergência</b><span>Quanto guardar, onde deixar e como criar o hábito. Conteúdo educativo, sem indicação de investimentos.</span></li>
+  </ol>
+</section>
+
+<section>
+  <h2>Para quem é</h2>
+  <ul class="plain">
+    <li>Quem chega no fim do mês sem entender onde o dinheiro foi.</li>
+    <li>Quem quer sair do zero e não sabe por onde começar.</li>
+    <li>Quem prefere explicações simples, sem termos difíceis.</li>
+  </ul>
+  <p>O curso não promete ficar rico nem retorno financeiro. Ele ensina a organizar o que você já tem.</p>
+</section>
+
+<section>
+  <h2>Dúvidas comuns</h2>
+  <details><summary>Preciso saber de matemática?</summary><p>Não. Só as quatro operações básicas, e o curso mostra tudo passo a passo.</p></details>
+  <details><summary>Como recebo o acesso?</summary><p>Depois do pagamento, você recebe o link de acesso pelo WhatsApp.</p></details>
+  <details><summary>É recomendação de investimento?</summary><p>Não. O conteúdo é educativo. Para decisões de investimento, consulte um profissional habilitado.</p></details>
+</section>
+
+<section id="comprar">
+  <div class="buy">
+    <h2>Comece hoje</h2>
+    <div class="price" id="price">R$ 29,99<small>pagamento único</small></div>
+    <p style="margin-top:14px">Fale comigo no WhatsApp para garantir o seu acesso.</p>
+    <a class="btn" id="buy" href="#">Comprar pelo WhatsApp</a>
+  </div>
+</section>
+
+<footer>© Dinheiro em Ordem. Conteúdo educativo. Não constitui recomendação de investimento.</footer>
+</main>
+
+<script>
+var WHATSAPP = "5567981905502";
+var PRICE = "R$ 29,99";
+
+var buy = document.getElementById("buy");
+buy.href = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent("Quero comprar o curso Dinheiro em Ordem");
+var price = document.getElementById("price");
+if (price && price.firstChild) price.firstChild.nodeValue = PRICE;
+
+var fmt = new Intl.NumberFormat("pt-BR", {style:"currency", currency:"BRL", maximumFractionDigits:0});
+var input = document.getElementById("renda");
+function update(){
+  var digits = input.value.replace(/\D/g, "").slice(0, 9);
+  input.value = digits ? Number(digits).toLocaleString("pt-BR") : "";
+  var v = Number(digits) || 0;
+  document.getElementById("o1").textContent = fmt.format(v * 0.5);
+  document.getElementById("o2").textContent = fmt.format(v * 0.3);
+  document.getElementById("o3").textContent = fmt.format(v * 0.2);
+}
+input.addEventListener("input", update);
+</script>
+</body>
+    </html>
