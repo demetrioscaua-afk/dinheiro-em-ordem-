@@ -1,0 +1,14 @@
+{
+  "name": "Dinheiro em Ordem",
+  "short_name": "Dinheiro",
+  "description": "Organize seu dinheiro: gastos, orçamento, reserva e dívidas.",
+  "start_url": "./acesso-k7x2q9m4.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2f6f3",
+  "theme_color": "#0b7a63",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
