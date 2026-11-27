@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dinheiro em Ordem: seu app</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Public+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f2f6f3; --card:#fff; --ink:#0f2230; --muted:#546a74; --line:#d3e0d9;
+  --green:#0b7a63; --green-ink:#fff; --gold:#ffcf4a; --red:#c8372d;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--paper:#0c1a22;--card:#14262f;--ink:#eaf3ef;--muted:#9db4ba;--line:#244049;--green:#3fcfa9;--green-ink:#0c1a22;--red:#ff7a6e;color-scheme:dark}
+}
+:root[data-theme="dark"]{--paper:#0c1a22;--card:#14262f;--ink:#eaf3ef;--muted:#9db4ba;--line:#244049;--green:#3fcfa9;--green-ink:#0c1a22;--red:#ff7a6e;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.5 "Public Sans",system-ui,sans-serif;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;margin:0;line-height:1.15}
+.wrap{max-width:560px;margin:0 auto;padding:18px 16px}
+h1{font-size:26px;font-weight:900}
+h2{font-size:22px;font-weight:700;margin-bottom:4px}
+.sub{color:var(--muted);margin:0 0 16px}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.big{font:900 34px/1.1 Fraunces,Georgia,serif}
+label{display:block;font-weight:700;font-size:14px;margin:0 0 4px}
+input,select{width:100%;font:500 17px "Public Sans",sans-serif;color:var(--ink);background:var(--paper);border:2px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+input:focus,select:focus{outline:none;border-color:var(--green)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{font:700 16px "Public Sans",sans-serif;cursor:pointer;border:0;border-radius:10px;padding:12px 16px}
+.pri{background:var(--green);color:var(--green-ink);width:100%}
+.ghost{background:transparent;color:var(--muted);padding:6px 10px;font-size:14px}
+button:focus-visible,summary:focus-visible,nav a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.item small{color:var(--muted);display:block}
+.item b{white-space:nowrap}
+.bar{height:12px;border-radius:6px;background:var(--line);overflow:hidden;margin:6px 0 2px}
+.bar i{display:block;height:100%;background:var(--green);border-radius:6px}
+.bar.warn i{background:var(--gold)} .bar.over i{background:var(--red)}
+.cat{margin-bottom:14px}
+.cat .t{display:flex;justify-content:space-between;gap:8px}
+.over-t{color:var(--red);font-weight:700}
+.empty{color:var(--muted);padding:6px 0}
+details{border-top:1px solid var(--line);padding:4px 0}
+summary{cursor:pointer;font-weight:700;padding:10px 0;list-style:none;display:flex;justify-content:space-between;gap:10px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--green);font-size:22px;line-height:1}
+details[open] summary::after{content:"−"}
+details p{margin:0 0 10px}
+.chk{display:flex;gap:8px;align-items:center;font-weight:500;margin:6px 0 10px}
+.chk input{width:22px;height:22px;margin:0}
+.tip{border-left:4px solid var(--gold);padding-left:10px;color:var(--muted);margin:8px 0 12px}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--card);border-top:1.5px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav a{text-decoration:none;color:var(--muted);text-align:center;padding:9px 2px 8px;font-size:12px;font-weight:700}
+nav a span{display:block;font-size:20px;line-height:1.2}
+nav a[aria-current="page"]{color:var(--green)}
+</style>
+</head>
+<body>
+<main class="wrap" id="app"></main>
+<nav aria-label="Menu">
+  <a href="#gastos" data-v="gastos"><span aria-hidden="true">🧾</span>Gastos</a>
+  <a href="#orcamento" data-v="orcamento"><span aria-hidden="true">🎯</span>Orçamento</a>
+  <a href="#reserva" data-v="reserva"><span aria-hidden="true">🛟</span>Reserva</a>
+  <a href="#dividas" data-v="dividas"><span aria-hidden="true">📉</span>Dívidas</a>
+  <a href="#aulas" data-v="aulas"><span aria-hidden="true">🎓</span>Aulas</a>
+</nav>
+
+<script>
+var KEY = "dinheiro-em-ordem-v1";
+var CATS = ["Moradia","Mercado","Transporte","Lazer","Saúde","Outros"];
+var S = {gastos:[], renda:0, limites:{}, reserva:{meta:0, guardado:0, aporte:0}, dividas:[], lidas:[]};
+try { var raw = localStorage.getItem(KEY); if (raw) S = Object.assign(S, JSON.parse(raw)); } catch(e) {}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} }
+
+var fmt = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
+function money(n){ return fmt.format(n||0); }
+function num(v){ var n = parseFloat(String(v).replace(/\./g,"").replace(",",".")); return isNaN(n)||n<0 ? 0 : n; }
+function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];}); }
+function $(id){ return document.getElementById(id); }
+function monthKey(d){ return d.slice(0,7); }
+var now = new Date();
+var thisMonth = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0");
+var today = thisMonth + "-" + String(now.getDate()).padStart(2,"0");
+function monthGastos(){ return S.gastos.filter(function(g){ return monthKey(g.data)===thisMonth; }); }
+function sum(a,f){ return a.reduce(function(t,x){return t+f(x);},0); }
+
+var LESSONS = [
+ {t:"1. Para onde vai seu dinheiro", p:["Você não consegue controlar o que não enxerga. O primeiro passo é anotar tudo o que gasta, até o cafezinho, durante 30 dias.","Ao fim do mês, olhe as categorias. Quase sempre há um gasto que surpreende, e é por ele que você começa a cortar."], tip:"Faça agora: vá na aba Gastos e anote o que gastou hoje."},
+ {t:"2. Seu orçamento do mês", p:["Orçamento é decidir antes quanto cada categoria pode gastar. Uma regra prática de partida é 50% para essenciais, 30% para desejos e 20% para reserva e dívidas.","Ajuste a divisão à sua realidade. Se o aluguel pesa mais, tire dos desejos, não da reserva."], tip:"Faça agora: na aba Orçamento, coloque sua renda e um limite para cada categoria."},
+ {t:"3. Como sair do aperto", p:["Liste todas as dívidas com valor e vencimento. Juros de cartão e cheque especial costumam ser os mais altos, então veja primeiro o que cobra mais caro.","Antes de pagar, ligue e peça desconto ou parcelamento. Evite abrir uma dívida nova para pagar outra sem comparar os juros."], tip:"Faça agora: cadastre suas dívidas na aba Dívidas."},
+ {t:"4. Reserva de emergência", p:["É um dinheiro separado para imprevistos, como conserto, desemprego ou saúde. Uma referência comum é guardar de 3 a 6 meses dos seus gastos essenciais.","Comece pequeno. Guardar um valor fixo logo que o dinheiro entra funciona melhor do que guardar o que sobrar."], tip:"Faça agora: na aba Reserva, defina a meta e quanto vai guardar por mês. Conteúdo educativo, sem recomendação de investimentos."}
+];
+
+function viewGastos(){
+  var mg = monthGastos(), total = sum(mg,function(g){return g.valor;});
+  var opts = CATS.map(function(c){return "<option>"+c+"</option>";}).join("");
+  var list = mg.slice().sort(function(a,b){return b.data.localeCompare(a.data)||b.id-a.id;}).map(function(g){
+    return '<div class="item"><div>'+esc(g.desc)+'<small>'+esc(g.cat)+' · '+g.data.split("-").reverse().join("/")+'</small></div><div><b>'+money(g.valor)+'</b> <button class="ghost" data-del="'+g.id+'" aria-label="Apagar gasto">✕</button></div></div>';
+  }).join("") || '<p class="empty">Nenhum gasto neste mês. Anote o primeiro acima.</p>';
+  return '<h1>Gastos</h1><p class="sub">Anote o que você gastou.</p>'+
+   '<div class="card"><div class="sub" style="margin:0">Total do mês</div><div class="big">'+money(total)+'</div></div>'+
+   '<div class="card"><label for="gd">O que foi?</label><input id="gd" placeholder="Ex.: mercado" maxlength="60">'+
+   '<div class="two"><div><label for="gv">Valor (R$)</label><input id="gv" inputmode="decimal" placeholder="0,00"></div><div><label for="gc">Categoria</label><select id="gc">'+opts+'</select></div></div>'+
+   '<button class="pri" id="addg">Adicionar gasto</button></div><div class="card">'+list+'</div>';
+}
+function viewOrc(){
+  var mg = monthGastos(), tot = sum(mg,function(g){return g.valor;});
+  var cats = CATS.map(function(c){
+    var gasto = sum(mg.filter(function(g){return g.cat===c;}),function(g){return g.valor;});
+    var lim = S.limites[c]||0, pct = lim? Math.min(100,gasto/lim*100):0;
+    var cls = lim && gasto>lim ? "over" : (lim && gasto>lim*0.8 ? "warn" : "");
+    var msg = !lim ? "Defina um limite" : (gasto>lim ? '<span class="over-t">Passou '+money(gasto-lim)+'</span>' : (cls==="warn"?"Quase no limite: ":"Restam ")+money(lim-gasto));
+    return '<div class="cat"><div class="t"><b>'+c+'</b><span>'+money(gasto)+'</span></div><div class="bar '+cls+'"><i style="width:'+pct+'%"></i></div>'+
+      '<div class="t"><small>'+msg+'</small><input data-lim="'+c+'" inputmode="decimal" placeholder="Limite" value="'+(lim?String(lim).replace(".",","):"")+'" style="width:110px;margin:0;padding:6px 8px;font-size:15px" aria-label="Limite de '+c+'"></div></div>';
+  }).join("");
+  var sobra = S.renda - tot;
+  return '<h1>Orçamento</h1><p class="sub">Defina quanto cada categoria pode gastar neste mês.</p>'+
+   '<div class="card"><label for="rd">Quanto você recebe por mês? (R$)</label><input id="rd" inputmode="decimal" placeholder="0,00" value="'+(S.renda?String(S.renda).replace(".",","):"")+'">'+
+   '<div class="two"><div><div class="sub" style="margin:0">Gasto</div><b>'+money(tot)+'</b></div><div><div class="sub" style="margin:0">'+(sobra<0?"Faltou":"Sobrou")+'</div><b class="'+(sobra<0?"over-t":"")+'">'+money(Math.abs(sobra))+'</b></div></div></div>'+
+   '<div class="card">'+cats+'</div>';
+}
+function viewRes(){
+  var r = S.reserva, falta = Math.max(0, r.meta-r.guardado), pct = r.meta? Math.min(100,r.guardado/r.meta*100):0;
+  var meses = r.aporte>0 && falta>0 ? Math.ceil(falta/r.aporte) : 0;
+  var info = !r.meta ? "Defina uma meta para começar." : (falta===0 ? "Meta alcançada! 🎉" : "Faltam "+money(falta)+(meses?" · cerca de "+meses+(meses===1?" mês":" meses")+" guardando "+money(r.aporte)+" por mês":""));
+  var ess = sum(monthGastos().filter(function(g){return g.cat==="Moradia"||g.cat==="Mercado"||g.cat==="Transporte"||g.cat==="Saúde";}),function(g){return g.valor;});
+  var ref = ess? '<p class="tip">Seus gastos essenciais neste mês somam '+money(ess)+'. Uma referência comum é de 3 a 6 vezes esse valor: '+money(ess*3)+' a '+money(ess*6)+'.</p>' : '';
+  return '<h1>Reserva</h1><p class="sub">Dinheiro separado para imprevistos.</p>'+
+   '<div class="card"><div class="sub" style="margin:0">Guardado</div><div class="big">'+money(r.guardado)+'</div><div class="bar"><i style="width:'+pct+'%"></i></div><small>'+info+'</small></div>'+ref+
+   '<div class="card"><div class="two"><div><label for="rm">Meta (R$)</label><input id="rm" inputmode="decimal" value="'+(r.meta?String(r.meta).replace(".",","):"")+'" placeholder="0,00"></div><div><label for="ra">Guardar por mês</label><input id="ra" inputmode="decimal" value="'+(r.aporte?String(r.aporte).replace(".",","):"")+'" placeholder="0,00"></div></div>'+
+   '<label for="rv">Quanto você guardou agora? (R$)</label><input id="rv" inputmode="decimal" placeholder="0,00"><button class="pri" id="addr">Somar à reserva</button></div>';
+}
+function viewDiv(){
+  var tot = sum(S.dividas,function(d){return d.valor;});
+  var list = S.dividas.slice().sort(function(a,b){return (a.venc||"9").localeCompare(b.venc||"9");}).map(function(d){
+    var atras = d.venc && d.venc<today;
+    return '<div class="item"><div>'+esc(d.nome)+'<small'+(atras?' class="over-t"':'')+'>'+(d.venc?(atras?"Venceu em ":"Vence em ")+d.venc.split("-").reverse().join("/"):"Sem vencimento")+'</small></div><div><b>'+money(d.valor)+'</b> <button class="ghost" data-paga="'+d.id+'">Quitei</button></div></div>';
+  }).join("") || '<p class="empty">Nenhuma dívida cadastrada.</p>';
+  return '<h1>Dívidas</h1><p class="sub">Liste tudo o que você deve. Veja primeiro o que cobra juros mais altos.</p>'+
+   '<div class="card"><div class="sub" style="margin:0">Total devido</div><div class="big">'+money(tot)+'</div></div>'+
+   '<div class="card"><label for="dn">Nome</label><input id="dn" placeholder="Ex.: cartão" maxlength="60"><div class="two"><div><label for="dv">Valor (R$)</label><input id="dv" inputmode="decimal" placeholder="0,00"></div><div><label for="dd">Vencimento</label><input id="dd" type="date"></div></div><button class="pri" id="addd">Adicionar dívida</button></div>'+
+   '<div class="card">'+list+'</div>';
+}
+function viewAulas(){
+  var ls = LESSONS.map(function(l,i){
+    var ok = S.lidas.indexOf(i)>=0;
+    return '<details><summary>'+(ok?"✓ ":"")+esc(l.t)+'</summary>'+l.p.map(function(p){return "<p>"+esc(p)+"</p>";}).join("")+'<p class="tip">'+esc(l.tip)+'</p><label class="chk"><input type="checkbox" data-lida="'+i+'"'+(ok?" checked":"")+'> Marcar como concluída</label></details>';
+  }).join("");
+  return '<h1>Aulas</h1><p class="sub">'+S.lidas.length+' de '+LESSONS.length+' concluídas.</p><div class="card">'+ls+'</div>'+
+   '<p class="sub" style="font-size:13px">Conteúdo educativo. Não é recomendação de investimento.</p><button class="ghost" id="reset">Apagar meus dados</button>';
+}
+
+var VIEWS = {gastos:viewGastos, orcamento:viewOrc, reserva:viewRes, dividas:viewDiv, aulas:viewAulas};
+var resetArmed = false;
+function render(){
+  var v = location.hash.replace("#",""); if (!VIEWS[v]) v = "gastos";
+  $("app").innerHTML = VIEWS[v]();
+  document.querySelectorAll("nav a").forEach(function(a){ if (a.dataset.v===v) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange", render);
+
+document.addEventListener("click", function(e){
+  var t = e.target;
+  if (t.id==="addg"){ var d=$("gd").value.trim(), v=num($("gv").value); if(!d||!v){ $("gd").focus(); return; }
+    S.gastos.push({id:Date.now(),desc:d,valor:v,cat:$("gc").value,data:today}); save(); render(); }
+  else if (t.dataset.del){ S.gastos = S.gastos.filter(function(g){return String(g.id)!==t.dataset.del;}); save(); render(); }
+  else if (t.id==="addr"){ var a=num($("rv").value); if(!a) return; S.reserva.guardado += a; save(); render(); }
+  else if (t.id==="addd"){ var n=$("dn").value.trim(), val=num($("dv").value); if(!n||!val){ $("dn").focus(); return; }
+    S.dividas.push({id:Date.now(),nome:n,valor:val,venc:$("dd").value}); save(); render(); }
+  else if (t.dataset.paga){ S.dividas = S.dividas.filter(function(d){return String(d.id)!==t.dataset.paga;}); save(); render(); }
+  else if (t.id==="reset"){ if(!resetArmed){ resetArmed=true; t.textContent="Toque de novo para apagar tudo"; t.style.color="var(--red)"; }
+    else { S = {gastos:[],renda:0,limites:{},reserva:{meta:0,guardado:0,aporte:0},dividas:[],lidas:[]}; resetArmed=false; save(); location.hash="gastos"; render(); } }
+});
+document.addEventListener("change", function(e){
+  var t = e.target;
+  if (t.dataset.lim){ S.limites[t.dataset.lim] = num(t.value); save(); render(); }
+  else if (t.id==="rd"){ S.renda = num(t.value); save(); render(); }
+  else if (t.id==="rm"){ S.reserva.meta = num(t.value); save(); render(); }
+  else if (t.id==="ra"){ S.reserva.aporte = num(t.value); save(); render(); }
+  else if (t.dataset.lida){ var i = Number(t.dataset.lida), k = S.lidas.indexOf(i); if (t.checked && k<0) S.lidas.push(i); if (!t.checked && k>=0) S.lidas.splice(k,1); save(); render(); }
+});
+render();
+</script>
+</body>
+</html>
